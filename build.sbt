@@ -1,11 +1,11 @@
 name := "scala"
 
-version := "1.0"
+version := "1.4.4"
 
-scalaVersion := "2.13.0"
+scalaVersion := "2.13.4"
 
-libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "3.8.6" % "test")
+libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "4.10.5" % "test")
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 scalacOptions in Test ++= Seq("-Yrangepos")

@@ -35,11 +35,10 @@ object Day1 extends App {
       
       while (innerStart < innerEnd) {
         val sum = current + sortedList(innerStart) + sortedList(innerEnd)
-        
         sum match {
-          case biggerSum if sum > 2020 => innerEnd = innerEnd - 1
-          case lesserSum if sum < 2020 => innerStart = innerStart + 1
-          case bingo if sum == 2020 => return current * sortedList(innerStart) * sortedList(innerEnd)
+          case sum if sum > 2020 => innerEnd = innerEnd - 1
+          case sum if sum < 2020 => innerStart = innerStart + 1
+          case sum if sum == 2020 => return current * sortedList(innerStart) * sortedList(innerEnd)
         }
       }
     }

@@ -11,39 +11,30 @@ object Day1 extends App {
   println(second())
   
   def first(): Int = {
-    firstRecursive(input.sorted)
-  }
-  
-  @tailrec
-  def firstRecursive(list: List[Int]): Int = {
-    if (list.isEmpty) 0
-    else {
-      val value = list.tail.filter(_ + list.head == 2020).map(_ * list.head)
-      value match {
-        case value if value.isEmpty => firstRecursive(list.tail)
-        case value if value.size == 1 => value.head
-        case _ => throw new Error("No Answer found!")
-      }
-    }
+    recurse(input.sorted, 2, 0)
   }
 
   def second(): Int = {
-    val sortedList = input.sorted
-    for (i <- sortedList.indices) {
-      val current = sortedList(i)
-      var innerStart = i + 1
-      var innerEnd = sortedList.length - 1
-      
-      while (innerStart < innerEnd) {
-        val sum = current + sortedList(innerStart) + sortedList(innerEnd)
-        sum match {
-          case sum if sum > 2020 => innerEnd = innerEnd - 1
-          case sum if sum < 2020 => innerStart = innerStart + 1
-          case sum if sum == 2020 => return current * sortedList(innerStart) * sortedList(innerEnd)
-        }
-      }
-    }
-    
-    throw new Error("Solution not found!")
+    recurse(input.sorted, 3, 0)
   }
+
+  def recurse(remianingList: List[Int], count: Int, sum: Int): Int = {
+    (remianingList, count, sum) match {
+      case param if param._1.isEmpty || count < 2 => 0 // edge case
+      case param if param._2 > 2 =>
+        val withHead = recurse(remianingList.tail, count - 1, sum + remianingList.head)
+        if (withHead != 0) {
+          withHead * remianingList.head
+        }
+        else recurse(remianingList.head :: remianingList.tail.tail, count -1, sum + remianingList.tail.head) * remianingList.tail.head
+      case param if param._2 == 2 =>
+        val value = remianingList.tail.filter(sum + _ + remianingList.head == 2020).map(_ * remianingList.head)
+        value match {
+          case value if value.isEmpty => recurse(remianingList.tail, count, sum)
+          case value if value.size == 1 => value.head
+          case _ => throw new Error("No Answer found!")
+        }
+    }
+  }
+
 }

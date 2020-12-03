@@ -11,27 +11,28 @@ object Day1 extends App {
   println(second())
   
   def first(): Int = {
-    recurse(input.sorted, 2, 0)
+    recurse(input.sorted, 2, 0, List[Int]()).product
   }
 
   def second(): Int = {
-    recurse(input.sorted, 3, 0)
+    recurse(input.sorted, 3, 0, List[Int]()).product
   }
 
-  def recurse(remianingList: List[Int], count: Int, sum: Int): Int = {
-    (remianingList, count, sum) match {
-      case param if param._1.isEmpty || count < 2 => 0 // edge case
+  @tailrec
+  def recurse(remainingList: List[Int], count: Int, sum: Int, currentList: List[Int]): List[Int] = {
+    (remainingList, count, sum) match {
+      case param if param._1.isEmpty || count < 2 => Nil // edge case
       case param if param._2 > 2 =>
-        val withHead = recurse(remianingList.tail, count - 1, sum + remianingList.head)
-        if (withHead != 0) {
-          withHead * remianingList.head
+        val withHead = recurse(remainingList.tail, count - 1, sum + remainingList.head, remainingList.head :: currentList)
+        withHead match {
+          case withHead if withHead == Nil => Nil
+          case _ =>  recurse(remainingList.head :: remainingList.tail.tail, count -1, sum + remainingList.tail.head, remainingList.tail.head :: currentList)
         }
-        else recurse(remianingList.head :: remianingList.tail.tail, count -1, sum + remianingList.tail.head) * remianingList.tail.head
       case param if param._2 == 2 =>
-        val value = remianingList.tail.filter(sum + _ + remianingList.head == 2020).map(_ * remianingList.head)
+        val value = remainingList.tail.filter(sum + _ + remainingList.head == 2020)
         value match {
-          case value if value.isEmpty => recurse(remianingList.tail, count, sum)
-          case value if value.size == 1 => value.head
+          case value if value.isEmpty => recurse(remainingList.tail, count, sum, currentList)
+          case value if value.size == 1 => remainingList.head :: value.head :: currentList
           case _ => throw new Error("No Answer found!")
         }
     }

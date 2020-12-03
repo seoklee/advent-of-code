@@ -14,18 +14,19 @@ object Day1 extends App {
     firstRecursive(input.sorted)
   }
   
-  // TODO fix this to accept arbitraily number of argument. can be n lg n
   @tailrec
   def firstRecursive(list: List[Int]): Int = {
     if (list.isEmpty) 0
     else {
       val value = list.tail.filter(_ + list.head == 2020).map(_ * list.head)
-      if (value.isEmpty) firstRecursive(list.tail)
-      // only one answer available
-      else value(0)
+      value match {
+        case value if value.isEmpty => firstRecursive(list.tail)
+        case value if value.size == 1 => value.head
+        case _ => throw new Error("No Answer found!")
+      }
     }
   }
-  
+
   def second(): Int = {
     val sortedList = input.sorted
     for (i <- sortedList.indices) {

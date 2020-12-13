@@ -8,6 +8,7 @@ object Day12 extends App {
   val input = fromResource("day12.txt").getLines().toList
 
   println(first(input, (0, 0, Direction.E)))
+  println(second(input, (0, 0), (1, 10)))
 
   @tailrec
   def first(input: List[String], state: (Int, Int, Direction.Value)): Int = {
@@ -22,6 +23,38 @@ object Day12 extends App {
           val trueDirection = if (direction.equals("F")) state._3 else Direction.withName(direction)
           val move = Direction.move(trueDirection, step)
           first(input.tail, (state._1 + move._1, state._2 + move._2, state._3))
+      }
+    }
+  }
+
+  @tailrec
+  def second(input: List[String], state: (Int, Int), wayPoint: (Int, Int)): Int = {
+    if (input.isEmpty) Math.abs(state._1) + Math.abs(state._2)
+    else {
+      val direction = input.head(0).toString
+      val step = input.head.substring(1).toInt
+      (direction) match {
+        case rotate if direction == "L" || direction == "R" =>
+          def rotatateLeft(prospectiveMove: (Int, Int)): (Int, Int) = {
+            (prospectiveMove._2, -prospectiveMove._1)
+          }
+
+          def rotateRight(prospectiveMove: (Int, Int)): (Int, Int) = {
+            (-prospectiveMove._2, prospectiveMove._1)
+          }
+
+          def recursiveRotate(prospectiveMove: (Int, Int), degree: Int, isRight: Boolean): (Int, Int) =  {
+            if (degree == 90)  if (isRight) rotateRight(prospectiveMove) else rotatateLeft(prospectiveMove)
+            else if(isRight) recursiveRotate(rotateRight(prospectiveMove), degree - 90, isRight) else recursiveRotate(rotatateLeft(prospectiveMove), degree - 90, isRight)
+          }
+
+          second(input.tail, state, recursiveRotate(wayPoint, step, direction == "R"))
+        case "F" =>
+          val newTuple = (state._1 + wayPoint._1 * step, state._2 + wayPoint._2 * step)
+          second(input.tail, newTuple, wayPoint)
+        case _ =>
+          val movement = Direction.move(Direction.withName(direction), step)
+          second(input.tail, state, (wayPoint._1 + movement._1, wayPoint._2  + movement._2))
       }
     }
   }
